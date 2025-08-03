@@ -1,0 +1,45 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Description: >
+  CarCharge - Serverless application to fetch and process telematics data using SmartCar API.
+
+Resources:
+  SmartCarFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: app.lambda_handler
+      Runtime: python3.11
+      CodeUri: ./src
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action:
+                - ssm:GetParameter
+                - ssm:PutParameter
+              Resource: "arn:aws:ssm:*:*:parameter/CarCharge/*"
+            - Effect: Allow
+              Action:
+                - dynamodb:PutItem
+              Resource:
+                - "arn:aws:dynamodb:*:*:table/BatteryLevelData"
+      Environment:
+        Variables:
+          SMARTCAR_AUTH_URL: "https://auth.smartcar.com/oauth/token"
+          SMARTCAR_API_BASE_URL: "https://api.smartcar.com/v2.0/vehicles"
+          PARAMETER_STORE_PREFIX: "/CarCharge/"
+          VEHICLE_ID: "62c3c352-dd17-434b-8894-9e84fcba2001"
+
+  BatteryLevelTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: BatteryLevelData
+      AttributeDefinitions:
+        - AttributeName: timestamp
+          AttributeType: S
+      KeySchema:
+        - AttributeName: timestamp
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
