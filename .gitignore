@@ -221,6 +221,7 @@ __pycache__/
 # AWS credentials and config
 *.env
 *.aws
+samconfig.toml
 
 # Logs and temporary files
 *.log
