@@ -30,7 +30,6 @@ Resources:
           SMARTCAR_AUTH_URL: "https://auth.smartcar.com/oauth/token"
           SMARTCAR_API_BASE_URL: "https://api.smartcar.com/v2.0/vehicles"
           PARAMETER_STORE_PREFIX: "/CarCharge/"
-          VEHICLE_ID: "62c3c352-dd17-434b-8894-9e84fcba2001"
 
   BatteryLevelTable:
     Type: AWS::DynamoDB::Table

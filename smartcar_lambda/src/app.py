@@ -7,7 +7,6 @@ from botocore.exceptions import ClientError
 
 # Constants
 SMARTCAR_API_BASE_URL = os.environ.get("SMARTCAR_API_BASE_URL")
-VEHICLE_ID = os.environ.get("VEHICLE_ID")
 PARAMETER_STORE_PREFIX = os.environ.get("PARAMETER_STORE_PREFIX")
 
 # AWS Clients
@@ -67,6 +66,7 @@ def refresh_access_token():
         response.raise_for_status()
 
 def construct_endpoint(endpoint):
+    VEHICLE_ID = get_parameter(f"{PARAMETER_STORE_PREFIX}vehicle_id")
     return f"{SMARTCAR_API_BASE_URL}/{VEHICLE_ID}/{endpoint}"
 
 def store_battery_level(battery_level):
