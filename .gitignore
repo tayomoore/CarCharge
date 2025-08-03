@@ -205,3 +205,23 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# SAM build artifacts
+.aws-sam/
+
+# Python virtual environments
+venv/
+.env/
+
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+
+# AWS credentials and config
+*.env
+*.aws
+
+# Logs and temporary files
+*.log
+*.tmp
