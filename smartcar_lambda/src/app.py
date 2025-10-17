@@ -17,7 +17,6 @@ battery_table = dynamodb.Table('BatteryLevelData')
 def get_parameter(name):
     try:
         response = ssm_client.get_parameter(Name=name, WithDecryption=True)
-        print(f"Fetched parameter {name}: {response['Parameter']['Value']}")
         return response['Parameter']['Value']
     except ClientError as e:
         print(f"Error fetching parameter {name}: {e}")
@@ -32,16 +31,12 @@ def set_parameter(name, value):
 
 def refresh_access_token():
     refresh_token = get_parameter(f"{PARAMETER_STORE_PREFIX}refresh_token")
-    print(f"Using refresh token: {refresh_token}")
     if not refresh_token:
         raise ValueError("Refresh token not found in Parameter Store.")
 
     client_id = get_parameter(f"{PARAMETER_STORE_PREFIX}client_id")
-    print(f"Using client ID: {client_id}")
     client_secret = get_parameter(f"{PARAMETER_STORE_PREFIX}client_secret")
-    print
     auth_header = f"Basic {base64.b64encode(f'{client_id}:{client_secret}'.encode()).decode()}"
-    print(f"Using auth header: {auth_header}")
 
     response = requests.post(
         os.environ.get("SMARTCAR_AUTH_URL"),
@@ -58,11 +53,10 @@ def refresh_access_token():
 
     if response.status_code == 200:
         tokens = response.json()
-        print(tokens)
         set_parameter(f"{PARAMETER_STORE_PREFIX}access_token", tokens['access_token'])
         set_parameter(f"{PARAMETER_STORE_PREFIX}refresh_token", tokens['refresh_token'])
     else:
-        print(f"Failed to refresh access token: {response.text}")
+        print(f"Failed to refresh access token")
         response.raise_for_status()
 
 def construct_endpoint(endpoint):
@@ -91,7 +85,7 @@ def get_battery_level():
 
     headers = {"Authorization": f"Bearer {access_token}"}
     endpoint = construct_endpoint("battery")
-    print(f"Fetching battery level from {endpoint} with headers: {headers}")
+    print(f"Fetching battery level from {endpoint}")
 
     response = requests.get(endpoint, headers=headers)
 
